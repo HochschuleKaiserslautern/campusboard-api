@@ -1,1 +1,1 @@
-# campusboard-api
+campusboard_app_api
