@@ -1,0 +1,10 @@
+applications:
+- path: target/auth-server-impl-1.0.0-SNAPSHOT.war
+  memory: 512M
+  instances: 1
+  domain: eu-gb.mybluemix.net
+  name: campusboard-auth
+  host: campusboard-auth
+  disk_quota: 1024M
+#env: 
+#    JBP_CONFIG_LIBERTY: "beanValidation-1.1", "cdi-1.2", "ejbLite-3.2", "el-3.0", "jaxrs-2.0", "jdbc-4.1", "jndi-1.0", "jpa-2.1", "jsf-2.2", "jsonp-1.0", "jsp-2.3", "managedBeans-1.0", "servlet-3.1", "websocket-1.1"

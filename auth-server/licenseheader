@@ -1,0 +1,24 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licenseFirst} *
+${licenseFirst} * Copyright 2016 Hochschule Kaiserslautern
+${licenseFirst} *
+${licenseFirst} * This file is part of de.hskl.campusboard.server.auth-server.
+${licenseFirst} *
+${licenseFirst} * de.hskl.campusboard.server.auth-server is free software: you can redistribute it and/or modify
+${licenseFirst} * it under the terms of the GNU General Public License as published by
+${licenseFirst} * the Free Software Foundation, either version 3 of the License, or
+${licenseFirst} * (at your option) any later version.
+${licenseFirst} *
+${licenseFirst} * de.hskl.campusboard.server.auth-server is distributed in the hope that it will be useful,
+${licenseFirst} * but WITHOUT ANY WARRANTY; without even the implied warranty of
+${licenseFirst} * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+${licenseFirst} * GNU General Public License for more details.
+${licenseFirst} *
+${licenseFirst} * You should have received a copy of the GNU General Public License
+${licenseFirst} * along with de.hskl.campusboard.server.auth-server.  If not, see <http://www.gnu.org/licenses/>.
+${licenseFirst} *
+<#if licenseLast??>
+${licenseLast}
+</#if>
