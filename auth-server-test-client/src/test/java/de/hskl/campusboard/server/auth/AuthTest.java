@@ -78,7 +78,7 @@ public class AuthTest extends ApiTest
 	}
 	
 	@Test
-	public void invalidRefreshTokeRequestnTest() throws OAuthSystemException, OAuthProblemException
+	public void invalidRefreshTokenRequestTest() throws OAuthSystemException, OAuthProblemException
 	{
 		OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 		

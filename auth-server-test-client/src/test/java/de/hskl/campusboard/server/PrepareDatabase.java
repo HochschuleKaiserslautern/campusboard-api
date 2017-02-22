@@ -14,8 +14,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.fail;
 
@@ -26,9 +24,9 @@ import static org.junit.Assert.fail;
 public class PrepareDatabase
 {
 
-    private static final String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost:3306/campusboard_personal";
-    private static final String DATABASE_USER = "campusboard";
-    private static final String DATABASE_PASSWORD = "";
+    private static final String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost:3306";
+    private static final String DATABASE_USER = "root";
+    private static final String DATABASE_PASSWORD = "123456";
 
     public void init()
     {
@@ -41,7 +39,6 @@ public class PrepareDatabase
             final Path INSERT_CANTEEN_SCRIPT = Paths.get(PrepareDatabase.class.getResource("/db_scripts/test_canteen.sql").toURI());
             final Path INSERT_TIMETABLE_SCRIPT = Paths.get(PrepareDatabase.class.getResource("/db_scripts/test_timetable.sql").toURI());
         
-            System.out.println("connection loaded");
             insert(DELETE_ALL_SCRIPT, cn);
             insert(INSERT_CLIENTS_SCRIPT, cn);
             insert(INSERT_USERS_SCRIPT, cn);
@@ -52,16 +49,11 @@ public class PrepareDatabase
         {
             e.printStackTrace();
             fail("couldn't prepare database");
-        }
-        
-        System.out.println("connection closed");
-        System.out.println("database is prepared");
+        }        
     }
 
     private void insert(Path sqlFilePath, Connection cn) throws SQLException, IOException
     {
-        System.out.println("start script " + sqlFilePath.getFileName());
-        
         StringBuilder queryBuilder = new StringBuilder();
         
         for (String query : Files.readAllLines(sqlFilePath, StandardCharsets.UTF_8))
@@ -74,8 +66,6 @@ public class PrepareDatabase
             if(query.contains(";"))
             {
                 Statement stat = cn.createStatement();
-                System.out.print(queryBuilder.toString());
-                System.out.println(" | Result: " + stat.executeUpdate(queryBuilder.toString()));
                 queryBuilder.setLength(0);
             }            
         }

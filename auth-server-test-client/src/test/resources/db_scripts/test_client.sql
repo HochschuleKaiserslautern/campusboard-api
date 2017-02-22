@@ -1,2 +1,2 @@
 INSERT INTO `campusboard_personal`.`known_client` (`client_id`) VALUES ('314');
-INSERT INTO `campusboard_personal`.`client_secrect` (`client_id`, `client_secret`, `active`) VALUES ('314', '1123581321', '1');
+INSERT INTO `campusboard_personal`.`client_secrect` (`client_id`, `client_secret`, `active`) VALUES ('314', '123456', '1');
