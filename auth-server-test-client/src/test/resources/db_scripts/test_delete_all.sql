@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS `campusboard_personal`.`refresh_token`;
+DROP TABLE IF EXISTS `campusboard_personal`.`client_secrect`;
+DROP TABLE IF EXISTS `campusboard_personal`.`api_user`;
+DROP TABLE IF EXISTS `campusboard_personal`.`known_client`;
+
 CREATE TABLE `campusboard_personal`.`api_user` (
   `USERNAME` varchar(255) NOT NULL,
   `ANREDE` varchar(255) DEFAULT NULL,
