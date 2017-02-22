@@ -4,7 +4,9 @@ jdk:
 services:
   - mysql
 install: .travis-conf/test-script install
-before_script: .travis-conf/test-script before_script
+before_script:
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('VERY_SECURE') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  - .travis-conf/test-script before_script
 script: .travis-conf/test-script test
 after_script: .travis-conf/test-script after_script
 env:
