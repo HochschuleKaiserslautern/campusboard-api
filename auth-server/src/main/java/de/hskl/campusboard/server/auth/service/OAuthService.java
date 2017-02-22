@@ -21,6 +21,7 @@
 
 package de.hskl.campusboard.server.auth.service;
 
+import com.auth0.jwt.JWTVerifyException;
 import de.hskl.campusboard.server.auth.entity.IClient;
 import de.hskl.campusboard.server.auth.entity.IClientSecret;
 import de.hskl.campusboard.server.auth.entity.IRefreshToken;
@@ -97,7 +98,7 @@ public abstract class OAuthService<CS extends IClientSecret, C extends IClient<C
         {
             tokenFromDatabase = isValidRefreshToken(oldRefreshToken);
         }
-        catch (SecurityException validationException)
+        catch (JWTVerifyException validationException)
         {
             return oAuthErrorBuilder.createOauthErrorResponse(OAuthErrorBuilder.ERROR_TYPES.invalid_grant, validationException.getMessage());
         }
@@ -185,7 +186,7 @@ public abstract class OAuthService<CS extends IClientSecret, C extends IClient<C
         return (c != null);
     }
 
-    public RT isValidRefreshToken(String refreshToken) throws SecurityException
+    public RT isValidRefreshToken(String refreshToken) throws JWTVerifyException
     {
         log.trace("isValidRefreshToken(): {}", () -> "refreshToken: " + refreshToken);
 
@@ -198,7 +199,7 @@ public abstract class OAuthService<CS extends IClientSecret, C extends IClient<C
 
         if (!"refresh".equals(payload.get(TOKEN_PAYLOAD_FIELDS.type.name())))
         {
-            throw new SecurityException("invalid token type -> maybe a access_token and not a refresh_token");
+            throw new JWTVerifyException("invalid token type -> maybe a access_token and not a refresh_token");
         }
 
         int refreshTokenId = (Integer) payload.get(TOKEN_PAYLOAD_FIELDS.refreshTokenId.name());
@@ -207,14 +208,14 @@ public abstract class OAuthService<CS extends IClientSecret, C extends IClient<C
 
         if (tokenFromDatabase == null)
         {
-            throw new IllegalStateException("a valid refresh token couldn't be found in database");
+            throw new JWTVerifyException("a valid refresh token couldn't be found in database");
         }
 
         if (tokenFromDatabase.isRevoked())
         {
             //TODO notify abuse-system
             System.err.println("reuse of revoked refresh_token");
-            throw new SecurityException("invalid refresh_token");
+            throw new JWTVerifyException("invalid refresh_token");
         }
 
         return tokenFromDatabase;

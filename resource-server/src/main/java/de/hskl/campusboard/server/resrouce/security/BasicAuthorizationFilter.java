@@ -1,8 +1,10 @@
 /**
-  SOME GPLv3-License-Text
-**/
+ * SOME GPLv3-License-Text
+ *
+ */
 package de.hskl.campusboard.server.resrouce.security;
 
+import com.auth0.jwt.JWTVerifyException;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -23,59 +25,86 @@ import de.hskl.campusboard.server.exception.OAuthErrorBuilder;
 import de.hskl.campusboard.server.exception.OAuthErrorBuilder.ERROR_TYPES;
 import de.hskl.campusboard.server.security.JwtTokenVerifyService;
 import de.hskl.campusboard.server.security.JwtTokenVerifyService.TOKEN_PAYLOAD_FIELDS;
+import java.lang.reflect.Method;
+import javax.ws.rs.container.ResourceInfo;
 
 /**
  * @author Julian Neuhaus <neuhaus.julian@gmail.com>
  * @since 1.0.0
  */
-@Provider
 @BasisAuthorization
+@Provider
 @Stateless
 public class BasicAuthorizationFilter implements ContainerRequestFilter
 {
-	@Context
-	private HttpServletRequest httpRequest;
-	
-	@Inject
-	private JwtTokenVerifyService jwTokenVerifyService; 
-	
-	@Inject
-	private Logger log;
-	
-	@Inject
-	private OAuthErrorBuilder oAuthErrorBuilder;
-	
-	@Override
-	public void filter(ContainerRequestContext requestContext)
-	{
-		log.trace("filter()");
 
-		String accessTokenFromRequest = null;
-		
-		try
-		{
-			OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(
-					httpRequest, ParameterStyle.QUERY);
+    @Context
+    private HttpServletRequest httpRequest;
 
-			accessTokenFromRequest = oauthRequest.getAccessToken();
-		}
-		catch (OAuthSystemException | OAuthProblemException e)
-		{
-			log.error(e);
-			requestContext.abortWith(oAuthErrorBuilder.createOauthErrorResponse(ERROR_TYPES.invalid_request, "this request needs authentication"));
-			return;
-		}
-		
-		try
-		{
-			Map<String, Object> tokenValues = jwTokenVerifyService.hasValidJwsTokenSignature(accessTokenFromRequest);
-			requestContext.getHeaders().add("username", (String)tokenValues.get(TOKEN_PAYLOAD_FIELDS.username.name()));
-		}
-		catch (SecurityException e)
-		{
-			log.error(e);
-			requestContext.abortWith(oAuthErrorBuilder.createOauthErrorResponse(ERROR_TYPES.invalid_grant, "invalid access_token"));
-			return;
-		}
-	}
+    @Context
+    private ResourceInfo resourceInfo;
+
+    @Inject
+    private JwtTokenVerifyService jwTokenVerifyService;
+
+    @Inject
+    private Logger log;
+
+    @Inject
+    private OAuthErrorBuilder oAuthErrorBuilder;
+
+    @Override
+    public void filter(ContainerRequestContext requestContext)
+    {
+        if(handleMethod())
+        {
+            doFilter(requestContext);                    
+        }       
+    }
+    
+    private void doFilter(ContainerRequestContext requestContext)
+    {
+        log.trace("filter()");
+
+        String accessTokenFromRequest = null;
+
+        try
+        {
+            OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(
+                    httpRequest, ParameterStyle.QUERY);
+
+            accessTokenFromRequest = oauthRequest.getAccessToken();
+        }
+        catch (OAuthSystemException | OAuthProblemException e)
+        {
+            log.error(e);
+            requestContext.abortWith(oAuthErrorBuilder.createOauthErrorResponse(ERROR_TYPES.invalid_request, "this request needs authentication"));
+            return;
+        }
+
+        try
+        {
+            Map<String, Object> tokenValues = jwTokenVerifyService.hasValidJwsTokenSignature(accessTokenFromRequest);
+            requestContext.getHeaders().add("username", (String) tokenValues.get(TOKEN_PAYLOAD_FIELDS.username.name()));
+        }
+        catch (JWTVerifyException e)
+        {
+            log.error(e);
+            requestContext.abortWith(oAuthErrorBuilder.createOauthErrorResponse(ERROR_TYPES.invalid_grant, "invalid access_token"));
+            return;
+        }
+    }
+    
+    private boolean handleMethod()
+    {
+        Method method = resourceInfo.getResourceMethod();
+
+        if (method != null) {
+           return  method.isAnnotationPresent(BasisAuthorization.class);
+        }
+        else
+        {
+            throw new IllegalStateException("Method to handle was null -> this should not happen");
+        }
+    }
 }

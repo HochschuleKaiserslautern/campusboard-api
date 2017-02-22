@@ -23,7 +23,6 @@ package de.hskl.campusboard.server.auth;
 
 
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;

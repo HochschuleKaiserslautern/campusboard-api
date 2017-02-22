@@ -68,7 +68,7 @@ public class JwtTokenVerifyService
         }
     }
 
-    public Map<String, Object> hasValidJwsTokenSignature(String token) throws SecurityException
+    public Map<String, Object> hasValidJwsTokenSignature(String token) throws JWTVerifyException
     {
         log.trace("hasValidJwsTokenSignature(): {}", () -> "token: " + token);
 
@@ -84,11 +84,11 @@ public class JwtTokenVerifyService
         }
         catch (JWTExpiredException expiredException)
         {
-            throw new SecurityException("the refresh_token is expired");
+            throw new JWTVerifyException("the refresh_token is expired");
         }
         catch (InvalidKeyException | SignatureException | JWTVerifyException | IllegalStateException e)
         {
-            throw new SecurityException("invalid token signature");
+            throw new JWTVerifyException("invalid token signature");
         }
         catch (NoSuchAlgorithmException | IOException e)
         {
