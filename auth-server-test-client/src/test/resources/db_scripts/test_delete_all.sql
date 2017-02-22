@@ -1,9 +1,3 @@
-DROP SCHEMA IF EXISTS `campusboard_personal`;
-
-CREATE SCHEMA `campusboard_personal`;
-
-USE `campusboard_personal`;
-
 CREATE TABLE `campusboard_personal`.`api_user` (
   `USERNAME` varchar(255) NOT NULL,
   `ANREDE` varchar(255) DEFAULT NULL,

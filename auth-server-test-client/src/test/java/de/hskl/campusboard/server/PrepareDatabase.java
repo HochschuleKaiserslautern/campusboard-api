@@ -24,9 +24,9 @@ import static org.junit.Assert.fail;
 public class PrepareDatabase
 {
 
-    private static final String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost:3306";
+    private static final String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost:3306/campusboard_personal";
     private static final String DATABASE_USER = "root";
-    private static final String DATABASE_PASSWORD = "123456";
+    private static final String DATABASE_PASSWORD = "VERY_SECURE";
 
     public void init()
     {
@@ -66,6 +66,7 @@ public class PrepareDatabase
             if(query.contains(";"))
             {
                 Statement stat = cn.createStatement();
+                stat.executeUpdate(queryBuilder.toString());
                 queryBuilder.setLength(0);
             }            
         }

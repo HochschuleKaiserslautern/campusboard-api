@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+
+ACTION=$1
+
+case $BUILDSTAGE in
+    unittest )
+        case $ACTION in
+            install )
+                mvn test-compile
+                ;;
+            test )
+                mvn test -fae
+                ;;
+        esac
+        ;;
+
+    systemtest )
+        case $ACTION in
+            install ) 
+                mvn clean install -Dmaven.test.skip=true
+                mvn -f auth-server-test-client/pom.xml clean compile package -Dmaven.test.skip=true
+                ;;
+
+            before_script )
+                mysql -e "SET PASSWORD FOR root@localhost = 'VERY_SECURE'"
+                mysql -u root -pVERY_SECURE -e "CREATE SCHEMA campusboard_personal"
+                mvn -f auth-server-test-client/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=org.glassfish.main.distributions:glassfish:4.1:zip
+                mvn -f auth-server-test-client/pom.xml org.apache.maven.plugins:maven-dependency-plugin:2.7:copy -Dartifact=mysql:mysql-connector-java:5.1.37:jar
+                cd auth-server-test-client/target/dependency
+                unzip glassfish-4.1.zip
+                cp mysql-connector-java-5.1.37.jar glassfish4/glassfish/lib
+                glassfish4/bin/asadmin start-domain
+                glassfish4/bin/asadmin create-jdbc-connection-pool --datasourceclassname com.mysql.jdbc.jdbc2.optional.MysqlDataSource --restype javax.sql.DataSource --property user=root:password=VERY_SECURE:url=\"jdbc:mysql://localhost:3306/campusboard_personal\" CampusboardPool
+                glassfish4/bin/asadmin create-jdbc-resource --connectionpoolid CampusboardPool jdbc/auth_personal
+                glassfish4/bin/asadmin deploy ../campusboard-api-test.war
+                ;;
+
+            test )
+                mvn -f auth-server-test-client/pom.xml test
+                ;;
+
+            after_script )
+                cd auth-server-test-client/target/dependency/glassfish4/bin
+                ./asadmin stop-domain
+                ;;
+        esac
+        ;;
+esac
+exit $?
+
