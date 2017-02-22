@@ -39,6 +39,7 @@ case $BUILDSTAGE in
                 ;;
 
             after_script )
+                cat auth-server-test-client/target/dependency/glassfish4/glassfish/domains/domain1/logs/server.log
                 cd auth-server-test-client/target/dependency/glassfish4/bin
                 ./asadmin stop-domain
                 ;;
