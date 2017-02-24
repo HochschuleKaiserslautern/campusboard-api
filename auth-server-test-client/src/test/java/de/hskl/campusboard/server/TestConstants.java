@@ -20,11 +20,10 @@ public class TestConstants
 
     public static final String TEST_TOKEN_ENDPOINT = TEST_DOMAIN_AUTH_BASE + "/api/token";
 
-    public static final String TEST_RESOURCE_USER_ENDPOINT = TEST_DOMAIN_RESOURCE_BASE + "/user/v1";
-
     private static final String GENERELL_TEST_RESOURCE_ENDPOINT = TEST_DOMAIN_RESOURCE_BASE + "/api";
     public static final String TEST_RESOURCE_CANTEEN_ENDPOINT_V1 = GENERELL_TEST_RESOURCE_ENDPOINT + "/v1/canteen";
     public static final String TEST_RESOURCE_TIMETABLE_ENDPOINT_V1 = GENERELL_TEST_RESOURCE_ENDPOINT + "/v1/timetable";
+    public static final String TEST_RESOURCE_USER_ENDPOINT_V1 = GENERELL_TEST_RESOURCE_ENDPOINT + "/user/v1"; 
 
     public static final String TEST_CLIENT_ID = "314";
     public static final String TEST_CLIENT_SECRET = "123456";

@@ -12,8 +12,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.fail;
 
@@ -31,7 +34,7 @@ public class PrepareDatabase
     public void init()
     {
         System.out.println("get connection");
-        try (Connection cn = getConnection())
+        try (Connection cn = PrepareDatabase.getConnection())
         {
             final Path DELETE_ALL_SCRIPT = Paths.get(PrepareDatabase.class.getResource("/db_scripts/test_delete_all.sql").toURI());
             final Path INSERT_CLIENTS_SCRIPT = Paths.get(PrepareDatabase.class.getResource("/db_scripts/test_client.sql").toURI());
@@ -75,11 +78,33 @@ public class PrepareDatabase
             fail("UNFINISHED SQL-QUERY: " + queryBuilder.toString());
     }
 
-    private Connection getConnection() throws SQLException
+    private static Connection getConnection() throws SQLException
     {
         Connection cn = DriverManager.getConnection(DATABASE_CONNECTION_URL, DATABASE_USER, DATABASE_PASSWORD);
         cn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         return cn;
     }
-
+    
+    public static void deleteUserFromDb(String username) throws SQLException
+    {
+        String deleteQuery = "DELETE FROM `campusboard_personal`.`api_user` WHERE USERNAME = ?";
+        
+        try(Connection cn = getConnection())
+        {
+            cn.setAutoCommit(false);
+            try
+            {
+                PreparedStatement statement = cn.prepareStatement(deleteQuery); 
+                statement.setString(1, username);
+                if(statement.executeUpdate() != 1)
+                    throw new SQLException("No entry has been modified for username '" + username + "'");
+                cn.commit();
+            }
+            catch(Exception e)
+            {
+                cn.rollback();
+                throw e;
+            }                
+        }
+    }
 }

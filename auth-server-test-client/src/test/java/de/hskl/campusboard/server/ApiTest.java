@@ -4,6 +4,7 @@
 package de.hskl.campusboard.server;
 
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 
 import org.junit.BeforeClass;
 
@@ -13,8 +14,8 @@ import org.junit.BeforeClass;
  */
 public abstract class ApiTest
 {
-	@BeforeClass
-	public static void initDatabase()
+	@Before
+	public void initDatabase()
 	{
 		new PrepareDatabase().init();
 	}
